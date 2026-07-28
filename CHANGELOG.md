@@ -1,3 +1,14 @@
+## [1.1.0](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.0.0...v1.1.0) (2026-07-28)
+
+### :sparkles: Features
+
+* declare licensing for config files via REUSE.toml ([dea4727](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/dea4727a1b99ac868b84cbd575473aa4c6da98c1))
+
+### :repeat: Chores
+
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.25.0 ([0356975](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/03569753e77db74bec38586bc81bd9dcf82c28be))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.25.1 ([02c79ca](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/02c79ca71d8019345221987904633a66a400e0f4))
+
 ## 1.0.0 (2026-07-28)
 
 ### :sparkles: Features
