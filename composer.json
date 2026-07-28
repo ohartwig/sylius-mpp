@@ -1,14 +1,15 @@
 {
     "name": "koh/sylius-mpp",
-    "description": "MPP payment discovery for Sylius",
+    "description": "MPP payment discovery for Sylius: an OpenAPI document at /openapi.json carrying x-payment-info on payable operations.",
     "type": "sylius-bundle",
     "license": "MIT",
     "keywords": [
         "sylius",
-        " an OpenAPI document at /openapi.json carrying x-payment-info on payable operations.:mpp",
+        "mpp",
         "openapi",
         "payment",
-        "agent"
+        "agent",
+        "ai"
     ],
     "authors": [
         {
