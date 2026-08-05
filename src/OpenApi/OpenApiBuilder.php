@@ -50,13 +50,36 @@ final class OpenApiBuilder
 
         foreach ($this->payable->all($context) as $operation) {
             $method = strtolower($operation->method);
+            $offer = $operation->toPaymentInfo();
+
+            // Two bundles pricing the same operation differently is a shop
+            // misconfiguration, and the one resolution that must not happen is
+            // by wiring order. The registry deliberately keeps both offers, so
+            // the x402 side sees two prices while this document would publish
+            // whichever provider was registered last — the shop then advertises
+            // a price it does not charge, which is the single thing the shared
+            // PayableOperation shape exists to prevent.
+            //
+            // An identical redeclaration is harmless and stays silent: it says
+            // the same thing twice.
+            $declared = $paths[$operation->path][$method]['x-payment-info'] ?? null;
+            if (null !== $declared && $declared !== $offer) {
+                throw new \LogicException(\sprintf(
+                    'Conflicting prices declared for %s %s. Exactly one provider may price an operation; got %s and %s.',
+                    strtoupper($method),
+                    $operation->path,
+                    json_encode($declared, \JSON_THROW_ON_ERROR),
+                    json_encode($offer, \JSON_THROW_ON_ERROR),
+                ));
+            }
+
             $paths[$operation->path][$method] = array_merge(
                 $paths[$operation->path][$method] ?? [
                     'summary' => $operation->summary ?? $operation->description ?? $operation->path,
                     'responses' => ['200' => ['description' => 'Success']],
                 ],
                 [
-                    'x-payment-info' => $operation->toPaymentInfo(),
+                    'x-payment-info' => $offer,
                 ],
             );
 
