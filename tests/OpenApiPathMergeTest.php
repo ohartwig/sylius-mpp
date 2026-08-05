@@ -129,6 +129,85 @@ final class OpenApiPathMergeTest extends TestCase
         self::assertSame('Overview', $doc['paths']['/llms.txt']['get']['description']);
     }
 
+    /**
+     * The registry keeps both offers on purpose, so the x402 enforcement table
+     * would see two prices while this document could only publish one. Picking
+     * the later provider would make the shop advertise a price it does not
+     * charge — the exact failure the shared PayableOperation shape exists to
+     * prevent — so the conflict has to surface instead.
+     */
+    public function testTwoDifferentPricesForOneOperationAreRefused(): void
+    {
+        try {
+            $this->build(payable: [
+                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', amount: '9900', currency: 'EUR'),
+            ]);
+            self::fail('Two different prices for one operation must not be silently resolved.');
+        } catch (\LogicException $exception) {
+            self::assertStringContainsString('/api/agent/feed', $exception->getMessage());
+            self::assertStringContainsString('2500', $exception->getMessage());
+            self::assertStringContainsString('9900', $exception->getMessage());
+        }
+    }
+
+    /** The same price twice says the same thing twice; that is not a conflict. */
+    public function testAnIdenticalRedeclarationIsAccepted(): void
+    {
+        $doc = $this->build(payable: [
+            new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+            new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+        ]);
+
+        self::assertSame('2500', $doc['paths']['/api/agent/feed']['get']['x-payment-info']['amount']);
+    }
+
+    /** Only a genuine conflict counts: the same path priced on two verbs is two operations. */
+    public function testTheSamePathPricedOnTwoVerbsIsNotAConflict(): void
+    {
+        $doc = $this->build(payable: [
+            new PayableOperation('/api/agent/feed', 'GET', amount: '2500'),
+            new PayableOperation('/api/agent/feed', 'POST', amount: '9900'),
+        ]);
+
+        self::assertSame('2500', $doc['paths']['/api/agent/feed']['get']['x-payment-info']['amount']);
+        self::assertSame('9900', $doc['paths']['/api/agent/feed']['post']['x-payment-info']['amount']);
+    }
+
+    /**
+     * The offers are compared as declared text, not as numbers. An amount is
+     * ASCII digits in the smallest unit, so "2500" and "2500.0" are two
+     * different declarations and only one of them is well formed — comparing
+     * them numerically would let a malformed declaration pass as agreement and
+     * publish whichever provider happened to be registered first.
+     */
+    public function testAmountsAreComparedAsDeclaredTextAndNotAsNumbers(): void
+    {
+        try {
+            $this->build(payable: [
+                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', amount: '2500.0', currency: 'EUR'),
+            ]);
+            self::fail('Two differently declared amounts must not be treated as one price.');
+        } catch (\LogicException $exception) {
+            self::assertStringContainsString('2500.0', $exception->getMessage());
+        }
+    }
+
+    /** A differing currency on an equal amount is still a different price. */
+    public function testADifferingCurrencyOnAnEqualAmountIsAConflict(): void
+    {
+        try {
+            $this->build(payable: [
+                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'USD'),
+            ]);
+            self::fail('An equal amount in two currencies is not one price.');
+        } catch (\LogicException $exception) {
+            self::assertStringContainsString('USD', $exception->getMessage());
+        }
+    }
+
     /** hasPayableOperations() is what a caller uses to decide whether to advertise x402 at all. */
     public function testHasPayableOperationsReflectsTheRegistry(): void
     {
