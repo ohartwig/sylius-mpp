@@ -1,3 +1,28 @@
+## [1.1.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.3...v1.1.4) (2026-08-12)
+
+### :bug: Fixes
+
+* **deps:** update dependency sylius/sylius to ^2.2.8 [security] ([49d4ab2](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/49d4ab2eed89095eda35654a7d2d77162db42c69))
+* **openapi:** refuse to publish one price while charging another ([4fa259f](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/4fa259f8b9fe58f86973432dacc6f32a141358e8))
+
+### :white_check_mark: Tests
+
+* **ci:** read both suites when reporting coverage ([914a8b3](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/914a8b3be8ac65504f56d32909142f8350d1dc21))
+* cover the endpoint that serves the prices and the wiring behind it ([831ba27](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/831ba27f129785444e4a81ae9175e908f73654b7))
+* cover where the free endpoints and the prices land on one path ([ebc5928](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/ebc59285d46549ccffdfcfaf848e09642e836c82))
+
+### :repeat: Continuous Integrations
+
+* follow the composed pipeline on [@1](https://git.ole-hartwig.eu/1) instead of an exact pin ([572527f](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/572527f85820d5ab6daa3a43584bb49296948e58))
+
+### :repeat: Chores
+
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.36.12 ([aa1f2a4](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/aa1f2a4e29ebf9969f1557e5e46d0f23061624a1))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.36.5 ([e91c26a](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/e91c26ae6ee26276f9db484685b47e98ae2d67f1))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.36.6 ([a05d18c](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/a05d18cd9cb5a8d0bdc074107b3bda2deccdbbae))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.36.8 ([d4fd51c](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/d4fd51c931d4548afc92ee916154e3f53367af4b))
+* **deps:** update dependency devops/ci-cd-components/composed-default-pipelines to v1.36.9 ([c3b08e0](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/c3b08e01ae24ba86a5d64c0dd6b8379ccbb75834))
+
 ## [1.1.3](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.2...v1.1.3) (2026-08-03)
 
 ### :repeat: Chores
