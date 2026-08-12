@@ -1,3 +1,9 @@
+## [1.1.5](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.4...v1.1.5) (2026-08-12)
+
+### :repeat: Chores
+
+* **deps:** update phpstan packages ([30839fd](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/30839fd304a70133d8b9aa09512221de9f1166c0))
+
 ## [1.1.4](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.3...v1.1.4) (2026-08-12)
 
 ### :bug: Fixes
