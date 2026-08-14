@@ -1,3 +1,9 @@
+## [1.1.8](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.7...v1.1.8) (2026-08-14)
+
+### :bug: Fixes
+
+* allow the infection extension installer plugin ([09c22bd](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/09c22bd10aade2a43fcdd51b58024d1a42ed1f44))
+
 ## [1.1.7](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.6...v1.1.7) (2026-08-12)
 
 ### :repeat: Chores
