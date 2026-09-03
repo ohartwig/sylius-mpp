@@ -1,3 +1,9 @@
+## [1.1.17](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.16...v1.1.17) (2026-09-03)
+
+### :bug: Fixes
+
+* **deps:** update dependency sylius/sylius to ^2.2.9 ([f4c5c5d](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/f4c5c5da730afe7ca0ebc6403590886c129a9e82))
+
 ## [1.1.16](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.15...v1.1.16) (2026-09-02)
 
 ### :repeat: Chores
