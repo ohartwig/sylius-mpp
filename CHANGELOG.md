@@ -1,3 +1,9 @@
+## [1.1.24](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.23...v1.1.24) (2026-09-28)
+
+### :repeat: Chores
+
+* **repo-templates:** sync ([dda1a5e](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/dda1a5efcbebc390145af708d2a35b2e91770b8a))
+
 ## [1.1.23](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.22...v1.1.23) (2026-09-26)
 
 ### :repeat: Chores
