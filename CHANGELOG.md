@@ -1,3 +1,13 @@
+## [1.1.28](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.27...v1.1.28) (2026-10-04)
+
+### :bug: Fixes
+
+* **deps:** accept Sylius 2.2.9 again ([340f788](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/340f788cb77246b433e51460c03834513d8898b5))
+
+### :repeat: Continuous Integrations
+
+* follow composed-default-pipelines on the rolling major tag ([84feaf7](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/84feaf76201f8042cb24b3399e5a3d4d585b1299))
+
 ## [1.1.27](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.26...v1.1.27) (2026-09-30)
 
 ### :bug: Fixes
