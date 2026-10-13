@@ -19,8 +19,9 @@
     ],
     "homepage": "https://ole-hartwig.eu/open-source/sylius-agent-ready",
     "support": {
-        "issues": "https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/-/issues",
-        "source": "https://github.com/ole-hartwig/sylius-mpp"
+        "issues": "https://github.com/ohartwig/sylius-mpp/issues",
+        "source": "https://github.com/ohartwig/sylius-mpp",
+        "security": "https://github.com/ohartwig/sylius-mpp/blob/main/SECURITY.md"
     },
     "require": {
         "koh/sylius-agent-contracts": "^1.1",
