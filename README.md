@@ -20,7 +20,7 @@ that lists the shop's agent endpoints and marks the payable ones with
   `/docs.jsonopenapi`; this one answers at `/openapi.json`, where MPP discovery
   looks.
 
-Requires PHP 8.5 and Sylius 2.2 or 2.3.
+Requires PHP 8.3 or later and Sylius 2.2 or 2.3.
 
 ## Install
 
