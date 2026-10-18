@@ -1,3 +1,10 @@
+## [1.1.37](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.36...v1.1.37) (2026-10-18)
+
+### :bug: Fixes
+
+* admit PHP 8.3 and test the floor on it ([462e60e](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/462e60e61f68ae98b1738bc4b502403f1cabf0e4))
+* **docs:** write the README ([eb7f88e](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/eb7f88ed106fce9e15df5b439df88eab8e05cd6f))
+
 ## [1.1.36](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.35...v1.1.36) (2026-10-16)
 
 ### :repeat: Chores
