@@ -1,3 +1,14 @@
+## [1.1.42](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.41...v1.1.42) (2026-11-04)
+
+### :bug: Fixes
+
+* **security:** AUD-053 F01 — replace customer identifiers with placeholders ([37740a7](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/37740a7a172a291f62129092e6e7b4df9774b15a))
+
+### :white_check_mark: Tests
+
+* **security:** AUD-053 F01 — fix the hygiene test namespace (PSR-4) ([f4205e3](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/f4205e3d030e5454034c60beeab98c5b156645c9))
+* **security:** AUD-053 F01 — add the customer-name hygiene test ([6809ce1](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/6809ce1d3ecc8f1694497a343d6a37dc71761856))
+
 ## [1.1.41](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.40...v1.1.41) (2026-11-01)
 
 ### :repeat: Chores
