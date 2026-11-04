@@ -152,7 +152,7 @@ final class OpenApiControllerTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
         $channel->method('getCode')->willReturn('WEB_DE');
-        $channel->method('getName')->willReturn('Tabak Budde');
+        $channel->method('getName')->willReturn('Example Shop');
 
         return new AgentContext($channel, $baseUrl, 'de_DE', ['de_DE']);
     }

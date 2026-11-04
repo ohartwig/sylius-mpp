@@ -26,7 +26,7 @@ final class OpenApiBuilderTest extends TestCase
 
         self::assertSame('3.1.0', $doc['openapi']);
         self::assertSame('https://shop.example.com', $doc['servers'][0]['url']);
-        self::assertStringContainsString('Tabak Budde', $doc['info']['title']);
+        self::assertStringContainsString('Example Shop', $doc['info']['title']);
     }
 
     public function testFreeEndpointsAppearWithoutAPrice(): void
@@ -135,7 +135,7 @@ final class OpenApiBuilderTest extends TestCase
     {
         $channel = $this->createMock(ChannelInterface::class);
         $channel->method('getCode')->willReturn('WEB_DE');
-        $channel->method('getName')->willReturn('Tabak Budde');
+        $channel->method('getName')->willReturn('Example Shop');
 
         return new AgentContext($channel, 'https://shop.example.com', 'de_DE', ['de_DE']);
     }
