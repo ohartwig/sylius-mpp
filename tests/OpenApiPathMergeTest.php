@@ -37,14 +37,14 @@ final class OpenApiPathMergeTest extends TestCase
     {
         $doc = $this->build(
             endpoints: [new AgentEndpoint('/api/agent/feed', 'Product feed', 'application/json', description: 'Every product, once a day.')],
-            payable: [new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR')],
+            payable: [new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR')],
         );
 
         $get = $doc['paths']['/api/agent/feed']['get'];
 
         self::assertSame('Product feed', $get['summary']);
         self::assertSame('Every product, once a day.', $get['description']);
-        self::assertSame('2500', $get['x-payment-info']['amount']);
+        self::assertSame('2500', $get['x-payment-info']['offers'][0]['amount']);
         self::assertArrayHasKey('200', $get['responses']);
         self::assertArrayHasKey('402', $get['responses']);
     }
@@ -58,20 +58,20 @@ final class OpenApiPathMergeTest extends TestCase
     {
         $doc = $this->build(
             endpoints: [new AgentEndpoint('/api/agent/feed', 'Product feed')],
-            payable: [new PayableOperation('/api/agent/feed', 'POST', amount: '5000', currency: 'EUR')],
+            payable: [new PayableOperation('/api/agent/feed', 'POST', payMethod: 'tempo', amount: '5000', currency: 'EUR')],
         );
 
         $pathItem = $doc['paths']['/api/agent/feed'];
 
         self::assertSame(['get', 'post'], array_keys($pathItem));
         self::assertArrayNotHasKey('x-payment-info', $pathItem['get']);
-        self::assertSame('5000', $pathItem['post']['x-payment-info']['amount']);
+        self::assertSame('5000', $pathItem['post']['x-payment-info']['offers'][0]['amount']);
     }
 
     /** The HTTP verb is lowercased for the document; OpenAPI keys are lowercase. */
     public function testTheHttpVerbIsLowercasedIntoTheDocument(): void
     {
-        $doc = $this->build(payable: [new PayableOperation('/api/agent/bulk', 'POST', amount: '5000')]);
+        $doc = $this->build(payable: [new PayableOperation('/api/agent/bulk', 'POST', payMethod: 'tempo', amount: '5000')]);
 
         self::assertArrayHasKey('post', $doc['paths']['/api/agent/bulk']);
         self::assertArrayNotHasKey('POST', $doc['paths']['/api/agent/bulk']);
@@ -81,20 +81,20 @@ final class OpenApiPathMergeTest extends TestCase
     public function testAPricedPathThatWasNeverAnnouncedIsStillPublished(): void
     {
         $doc = $this->build(payable: [
-            new PayableOperation('/api/agent/quote', summary: 'Live quote', amount: null),
+            new PayableOperation('/api/agent/quote', payMethod: 'tempo', summary: 'Live quote', amount: null),
         ]);
 
         self::assertSame('Live quote', $doc['paths']['/api/agent/quote']['get']['summary']);
-        self::assertNull($doc['paths']['/api/agent/quote']['get']['x-payment-info']['amount']);
+        self::assertNull($doc['paths']['/api/agent/quote']['get']['x-payment-info']['offers'][0]['amount']);
     }
 
     /** Without a summary the description stands in, and without either the path does. */
     public function testTheSummaryFallsBackToTheDescriptionAndThenToThePath(): void
     {
         $withDescription = $this->build(payable: [
-            new PayableOperation('/api/agent/quote', description: 'Ask for a price'),
+            new PayableOperation('/api/agent/quote', payMethod: 'tempo', description: 'Ask for a price'),
         ]);
-        $withNeither = $this->build(payable: [new PayableOperation('/api/agent/quote')]);
+        $withNeither = $this->build(payable: [new PayableOperation('/api/agent/quote', payMethod: 'tempo')]);
 
         self::assertSame('Ask for a price', $withDescription['paths']['/api/agent/quote']['get']['summary']);
         self::assertSame('/api/agent/quote', $withNeither['paths']['/api/agent/quote']['get']['summary']);
@@ -104,8 +104,8 @@ final class OpenApiPathMergeTest extends TestCase
     public function testEveryPricedOperationDeclaresIts402(): void
     {
         $doc = $this->build(payable: [
-            new PayableOperation('/api/agent/feed', 'GET', amount: '2500'),
-            new PayableOperation('/api/agent/bulk', 'POST', amount: '5000'),
+            new PayableOperation('/api/agent/feed', 'GET', payMethod: 'tempo', amount: '2500'),
+            new PayableOperation('/api/agent/bulk', 'POST', payMethod: 'tempo', amount: '5000'),
         ]);
 
         self::assertArrayHasKey('402', $doc['paths']['/api/agent/feed']['get']['responses']);
@@ -140,8 +140,8 @@ final class OpenApiPathMergeTest extends TestCase
     {
         try {
             $this->build(payable: [
-                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
-                new PayableOperation('/api/agent/feed', amount: '9900', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '9900', currency: 'EUR'),
             ]);
             self::fail('Two different prices for one operation must not be silently resolved.');
         } catch (\LogicException $exception) {
@@ -155,23 +155,23 @@ final class OpenApiPathMergeTest extends TestCase
     public function testAnIdenticalRedeclarationIsAccepted(): void
     {
         $doc = $this->build(payable: [
-            new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
-            new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+            new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR'),
+            new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR'),
         ]);
 
-        self::assertSame('2500', $doc['paths']['/api/agent/feed']['get']['x-payment-info']['amount']);
+        self::assertSame('2500', $doc['paths']['/api/agent/feed']['get']['x-payment-info']['offers'][0]['amount']);
     }
 
     /** Only a genuine conflict counts: the same path priced on two verbs is two operations. */
     public function testTheSamePathPricedOnTwoVerbsIsNotAConflict(): void
     {
         $doc = $this->build(payable: [
-            new PayableOperation('/api/agent/feed', 'GET', amount: '2500'),
-            new PayableOperation('/api/agent/feed', 'POST', amount: '9900'),
+            new PayableOperation('/api/agent/feed', 'GET', payMethod: 'tempo', amount: '2500'),
+            new PayableOperation('/api/agent/feed', 'POST', payMethod: 'tempo', amount: '9900'),
         ]);
 
-        self::assertSame('2500', $doc['paths']['/api/agent/feed']['get']['x-payment-info']['amount']);
-        self::assertSame('9900', $doc['paths']['/api/agent/feed']['post']['x-payment-info']['amount']);
+        self::assertSame('2500', $doc['paths']['/api/agent/feed']['get']['x-payment-info']['offers'][0]['amount']);
+        self::assertSame('9900', $doc['paths']['/api/agent/feed']['post']['x-payment-info']['offers'][0]['amount']);
     }
 
     /**
@@ -185,8 +185,8 @@ final class OpenApiPathMergeTest extends TestCase
     {
         try {
             $this->build(payable: [
-                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
-                new PayableOperation('/api/agent/feed', amount: '2500.0', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR'),
+                new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500.0', currency: 'EUR'),
             ]);
             self::fail('Two differently declared amounts must not be treated as one price.');
         } catch (\LogicException $exception) {
@@ -194,17 +194,32 @@ final class OpenApiPathMergeTest extends TestCase
         }
     }
 
-    /** A differing currency on an equal amount is still a different price. */
-    public function testADifferingCurrencyOnAnEqualAmountIsAConflict(): void
+    /**
+     * The same method in two currencies is two alternatives, not a conflict
+     * (draft-payment-discovery-01, "Same Intent, Different Currency").
+     */
+    public function testADifferingCurrencyIsAnAlternativeOffer(): void
+    {
+        $doc = $this->build(payable: [
+            new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR'),
+            new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'USD'),
+        ]);
+
+        $offers = $doc['paths']['/api/agent/feed']['get']['x-payment-info']['offers'];
+        self::assertSame(['EUR', 'USD'], array_column($offers, 'currency'));
+    }
+
+    /** One method, one currency, two descriptions: still two declarations of one price. */
+    public function testADifferingDescriptionOnTheSamePriceIsAConflict(): void
     {
         try {
             $this->build(payable: [
-                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
-                new PayableOperation('/api/agent/feed', amount: '2500', currency: 'USD'),
+                new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR', description: 'A'),
+                new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR', description: 'B'),
             ]);
-            self::fail('An equal amount in two currencies is not one price.');
+            self::fail('Two declarations of one price must agree.');
         } catch (\LogicException $exception) {
-            self::assertStringContainsString('USD', $exception->getMessage());
+            self::assertStringContainsString('Conflicting prices declared for GET /api/agent/feed', $exception->getMessage());
         }
     }
 
@@ -213,7 +228,7 @@ final class OpenApiPathMergeTest extends TestCase
     {
         self::assertFalse($this->builder()->hasPayableOperations($this->context()));
         self::assertTrue(
-            $this->builder(payable: [new PayableOperation('/api/agent/feed', amount: '2500')])
+            $this->builder(payable: [new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500')])
                 ->hasPayableOperations($this->context()),
         );
     }
@@ -221,7 +236,7 @@ final class OpenApiPathMergeTest extends TestCase
     /** The x402 price table is built from this list; it must be the operations, not the document. */
     public function testPayableOperationsExposesTheOperationsThemselves(): void
     {
-        $operation = new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR');
+        $operation = new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR');
 
         $operations = $this->builder(payable: [$operation])->payableOperations($this->context());
 
@@ -243,8 +258,9 @@ final class OpenApiPathMergeTest extends TestCase
     /** Configured categories reach x-service-info; without them only the docs block remains. */
     public function testCategoriesAreOptionalButTheDocsBlockIsNot(): void
     {
-        $without = $this->build();
-        $with = $this->build(categories: ['data', 'search']);
+        $offer = [new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '1')];
+        $without = $this->build(payable: $offer);
+        $with = $this->build(payable: $offer, categories: ['data', 'search']);
 
         self::assertArrayNotHasKey('categories', $without['x-service-info']);
         self::assertSame(['data', 'search'], $with['x-service-info']['categories']);

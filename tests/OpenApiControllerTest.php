@@ -48,11 +48,11 @@ final class OpenApiControllerTest extends TestCase
     public function testADeclaredPriceIsPresentInTheServedBody(): void
     {
         $response = $this->respond(payable: [
-            new PayableOperation('/api/agent/feed', amount: '2500', currency: 'EUR'),
+            new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '2500', currency: 'EUR'),
         ]);
 
         $decoded = json_decode((string) $response->getContent(), true, 512, \JSON_THROW_ON_ERROR);
-        $offer = $decoded['paths']['/api/agent/feed']['get']['x-payment-info'];
+        $offer = $decoded['paths']['/api/agent/feed']['get']['x-payment-info']['offers'][0];
 
         self::assertSame('2500', $offer['amount']);
         self::assertSame('EUR', $offer['currency']);
@@ -107,7 +107,8 @@ final class OpenApiControllerTest extends TestCase
         $decoded = json_decode((string) $this->respond()->getContent(), true, 512, \JSON_THROW_ON_ERROR);
 
         self::assertSame([], $decoded['paths']);
-        self::assertArrayHasKey('x-service-info', $decoded);
+        // No offer, no payment service to describe.
+        self::assertArrayNotHasKey('x-service-info', $decoded);
     }
 
     /** @param list<PayableOperation> $payable */
