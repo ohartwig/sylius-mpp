@@ -1,3 +1,9 @@
+## [1.1.43](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.42...v1.1.43) (2026-11-05)
+
+### :bug: Fixes
+
+* **openapi:** declare MPP offers only, in the multi-offer form ([f91da53](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/commit/f91da53af7fd0df6940e12639cfa4f99b0f25254))
+
 ## [1.1.42](https://git.ole-hartwig.eu/ai-ready-platform/platform/sylius-mpp/compare/v1.1.41...v1.1.42) (2026-11-04)
 
 ### :bug: Fixes
