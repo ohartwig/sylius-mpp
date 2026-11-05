@@ -10,6 +10,8 @@ namespace Koh\SyliusMpp\Tests;
 use Koh\SyliusAgentContracts\Context\AgentContext;
 use Koh\SyliusAgentContracts\Context\AgentContextFactoryInterface;
 use Koh\SyliusAgentContracts\Http\AgentJsonResponder;
+use Koh\SyliusAgentContracts\Model\PayableOperation;
+use Koh\SyliusAgentContracts\Provider\PayableOperationProviderInterface;
 use Koh\SyliusAgentContracts\Registry\AgentEndpointRegistry;
 use Koh\SyliusAgentContracts\Registry\PayableOperationRegistry;
 use Koh\SyliusMpp\Agent\MppEndpointProvider;
@@ -83,7 +85,15 @@ final class BundleTest extends TestCase
         $container = $this->compile(config: ['categories' => ['data', 'search']]);
 
         $container->set(AgentEndpointRegistry::class, new AgentEndpointRegistry([]));
-        $container->set(PayableOperationRegistry::class, new PayableOperationRegistry([]));
+        // x-service-info is only published next to at least one MPP offer.
+        $container->set(PayableOperationRegistry::class, new PayableOperationRegistry([
+            new class implements PayableOperationProviderInterface {
+                public function getPayableOperations(AgentContext $context): iterable
+                {
+                    yield new PayableOperation('/api/agent/feed', payMethod: 'tempo', amount: '1');
+                }
+            },
+        ]));
 
         $builder = $container->get(OpenApiBuilder::class);
         self::assertInstanceOf(OpenApiBuilder::class, $builder);

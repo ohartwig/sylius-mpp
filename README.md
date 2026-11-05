@@ -6,16 +6,24 @@ SPDX-License-Identifier: MIT
 # koh/sylius-mpp
 
 MPP payment discovery for Sylius: an OpenAPI 3.1 document at `/openapi.json`
-that lists the shop's agent endpoints and marks the payable ones with
-`x-payment-info`.
+that lists the shop's agent endpoints and marks the ones with an MPP offer with
+`x-payment-info`, per
+[draft-payment-discovery-01](https://github.com/tempoxyz/mpp-specs/blob/main/specs/extensions/draft-payment-discovery-01.md).
 
 - **One document for agents** — every endpoint the other `koh` bundles register
   (ACP feed, MCP, llms.txt, …) appears as a path, without listing them by hand.
 - **Prices from the same source as enforcement** — payable operations come from
   `PayableOperationProviderInterface`, which `koh/sylius-x402` also reads to
   charge. A route cannot advertise a price it does not charge.
-- **Conflicts fail loudly** — two providers pricing the same operation
-  differently raise an error instead of publishing whichever was wired last.
+- **MPP offers only** — an `x402` price is a different protocol, not an MPP
+  payment method, and is left out; `koh/sylius-x402` announces it in its own
+  402. With no MPP offer at all the document carries no `x-payment-info` and no
+  `x-service-info`.
+- **Conflicts fail loudly** — two providers pricing the same operation with the
+  same intent, method and currency differently raise an error instead of
+  publishing whichever was wired last; a malformed offer is refused too.
+  Different methods, intents or currencies are alternatives and are published
+  side by side in `offers`.
 - **Independent of API Platform** — API Platform keeps its own document at
   `/docs.jsonopenapi`; this one answers at `/openapi.json`, where MPP discovery
   looks.
@@ -59,7 +67,8 @@ before Symfony is asked.
 
 ## Configure
 
-One optional setting, the service categories announced in `x-service-info`:
+One optional setting, the service categories announced in `x-service-info`
+(published only next to at least one MPP offer):
 
 ```yaml
 # config/packages/koh_mpp.yaml
@@ -69,9 +78,10 @@ koh_mpp:
 
 ## Declaring a payable operation
 
-Install `koh/sylius-x402` and configure its price table — this bundle picks the
-prices up from there. Or implement the contract yourself and tag the service
-`koh_agent.payable_operation`:
+Implement the contract and tag the service `koh_agent.payable_operation`.
+`payMethod` is an MPP payment method identifier (lowercase letters, such as
+`tempo` or `stripe`); the `x402` rail of `koh/sylius-x402` is not one and does
+not appear here:
 
 ```php
 use Koh\SyliusAgentContracts\Context\AgentContext;
@@ -86,9 +96,9 @@ final class FeedPrice implements PayableOperationProviderInterface
             path: '/api/agent/feed',
             method: 'GET',
             intent: 'charge',
-            payMethod: 'x402',
+            payMethod: 'tempo',
             amount: '10000',          // smallest unit of the currency
-            currency: '0x…',          // ISO 4217 for fiat, contract address for a token
+            currency: '0x…',          // ISO 4217 for fiat, token address for a token
             description: 'Product feed',
         );
     }
@@ -97,7 +107,7 @@ final class FeedPrice implements PayableOperationProviderInterface
 
 ## Output
 
-`GET /openapi.json` with the ACP feed installed and priced:
+`GET /openapi.json` with the ACP feed installed and an MPP offer on it:
 
 ```json
 {
@@ -128,11 +138,13 @@ final class FeedPrice implements PayableOperationProviderInterface
           "402": { "description": "Payment Required" }
         },
         "x-payment-info": {
-          "intent": "charge",
-          "method": "x402",
-          "amount": "10000",
-          "currency": "0x…",
-          "description": "Product feed"
+          "offers": [{
+            "intent": "charge",
+            "method": "tempo",
+            "amount": "10000",
+            "currency": "0x…",
+            "description": "Product feed"
+          }]
         }
       }
     }
